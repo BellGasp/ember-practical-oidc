@@ -1,3 +1,15 @@
-<h2 id="title">Welcome to Ember</h2>
+<div>
+  <span>Currently authenticated: <i>{{session.isAuthenticated}}</i></span>
+
+  {{#if session.isAuthenticated}}
+    <button type="button" name="button" {{action 'logout'}}>Logout</button>
+  {{/if}}
+</div>
+
+{{#link-to 'index'}}Index{{/link-to}}
+{{#link-to 'authenticated-one'}}Auth 1{{/link-to}}
+{{#link-to 'authenticated-two'}}Auth 2{{/link-to}}
+
+<hr>
 
 {{outlet}}

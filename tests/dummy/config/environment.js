@@ -18,6 +18,14 @@ module.exports = function(environment) {
       }
     },
 
+    OIDC: {
+      enableLogging: true,
+      applicationName: process.env.OIDC_APP_NAME,
+      applicationURL: process.env.OIDC_APP_URL,
+      authenticationURL: process.env.OIDC_AUTH_URL,
+      requestedScopes: process.env.OIDC_SCOPES
+    },
+
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
@@ -25,11 +33,7 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
-    // ENV.APP.LOG_RESOLVER = true;
-    // ENV.APP.LOG_ACTIVE_GENERATION = true;
-    // ENV.APP.LOG_TRANSITIONS = true;
-    // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
-    // ENV.APP.LOG_VIEW_LOOKUPS = true;
+
   }
 
   if (environment === 'test') {
