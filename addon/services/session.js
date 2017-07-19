@@ -27,7 +27,7 @@ export default Service.extend({
     this._super(...arguments);
 
     if (OIDC.enableLogging) {
-      Logger.info('OIDC Session Service: initializing');
+      Logger.info('OIDC Session Service: Initializing');
     }
 
     this._setEssentialProperties();
@@ -43,13 +43,30 @@ export default Service.extend({
           if (transition) {
             transition.retry();
           }
-        }, () => {
+        }, (error) => {
           this.set('isAuthenticated', false);
-          this.get('routing').transitionTo('authentication-failure');
+
+          if (error.message === 'Popup window closed') {
+            // The popup window was closed, we try and redirect to the specified route
+            if (OIDC.failedLoginRoute && typeof OIDC.failedLoginRoute === 'string') {
+              if (OIDC.enableLogging) {
+                Logger.info('OIDC Session Service: Attempting to redirect the specified failed ' +
+                  `login route: ${OIDC.failedLoginRoute}.`);
+              }
+
+              this.get('routing').transitionTo(OIDC.failedLoginRoute);
+            } else {
+              Logger.warn('OIDC Session Service: There were no `ENV.OIDC.failedLoginRoute` ' +
+                'property specified in the `config/environment.js` file. No automatic ' +
+                'redirection will be attempted at this time.');
+            }
+          } else {
+            throw error;
+          }
         });
       } else {
-        this.set('isAuthenticated', true);
-        this.set('profile', data.profile);
+        this.setProperties({ isAuthenticated: true, profile: data.profile });
+
         if (transition) {
           transition.retry();
         }
@@ -74,7 +91,9 @@ export default Service.extend({
       !OIDC.requestedScopes;
 
     if (isMissingEssentialInformation) {
-      throw new Error('OIDC Session Service: Missing essential information, please ensure you have properly set `ENV.OIDC.applicationName`, `ENV.OIDC.applicationURL`, `ENV.OIDC.authenticationURL`, `ENV.OIDC.requestedScopes` in config.environment.js');
+      throw new Error('OIDC Session Service: Missing essential information, please ensure you ' +
+        'have properly set `ENV.OIDC.applicationName`, `ENV.OIDC.applicationURL`, ' +
+        '`ENV.OIDC.authenticationURL`, `ENV.OIDC.requestedScopes` in config.environment.js');
     }
 
     this.setProperties({
@@ -86,7 +105,33 @@ export default Service.extend({
   },
 
   _setOptionalProperties() {
-    // TODO
+    this._setOptionalProperty('popupRedirectURL', OIDC.popupRedirectURL, 'string');
+    this._setOptionalProperty('silentRedirectURL', OIDC.silentRedirectURL, 'string');
+    this._setOptionalProperty('responseType', OIDC.responseType, 'string');
+    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL, 'string');
+    this._setOptionalProperty('checkSessionInterval', OIDC.checkSessionInterval, 'number');
+    this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
+    this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
+    this._setOptionalProperty('loadUserInfo', OIDC.loadUserInfo, 'boolean');
+  },
+
+  _setOptionalProperty(propertyName, propertyValue, propertyType) {
+    if (propertyValue) {
+      if (typeof propertyValue === propertyType) {
+        this._logOptionalPropertyOverride(propertyName, propertyValue);
+        this.set(`${propertyName}`, propertyValue);
+      } else {
+        this._throwOptionalPropertyError(`ENV.OIDC.${propertyName}`);
+      }
+    }
+  },
+
+  _logOptionalPropertyOverride(propertyName, propertyValue) {
+    Logger.info(`OIDC Session Service: Overriding the default value for the ${propertyName} to: ${propertyValue}.`);
+  },
+
+  _throwOptionalPropertyError(propertyKey) {
+    throw new Error(`OIDC Session Service: Please ensure you have properly set \`${propertyKey}\` in config.environment.js`);
   },
 
   _setupUserManager() {

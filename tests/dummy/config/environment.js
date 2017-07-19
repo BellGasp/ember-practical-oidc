@@ -18,18 +18,19 @@ module.exports = function(environment) {
       }
     },
 
-    OIDC: {
-      enableLogging: true,
-      applicationName: process.env.OIDC_APP_NAME,
-      applicationURL: process.env.OIDC_APP_URL,
-      authenticationURL: process.env.OIDC_AUTH_URL,
-      requestedScopes: process.env.OIDC_SCOPES
-    },
-
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
     }
+  };
+
+  ENV.OIDC = {
+    enableLogging: true,
+    initializeRoutes: true,
+    applicationName: process.env.OIDC_APP_NAME,
+    applicationURL: process.env.OIDC_APP_URL,
+    authenticationURL: process.env.OIDC_AUTH_URL,
+    requestedScopes: process.env.OIDC_SCOPES
   };
 
   if (environment === 'development') {
