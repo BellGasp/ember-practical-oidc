@@ -1,17 +1,25 @@
 {
   "name": "ember-practical-oidc",
-  "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.0.0-beta.1",
+  "description": "An addon that encapsulates a way to interact with an OIDC server using Ember.js.",
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "oidc",
+    "authentication"
   ],
   "license": "MIT",
-  "author": "",
+  "author": {
+    "name": "Jean-Philippe Roy",
+    "email": "ohnoesmyoreos@gmail.com"
+  },
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BellGasp/ember-practical-oidc.git"
+  },
   "scripts": {
     "build": "ember build",
     "start": "ember server",

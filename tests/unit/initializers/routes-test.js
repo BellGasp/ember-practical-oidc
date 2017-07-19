@@ -3,7 +3,7 @@ import { initialize } from 'dummy/initializers/routes';
 import { module, test } from 'qunit';
 import destroyApp from '../../helpers/destroy-app';
 
-module('Unit | Initializer | routes', {
+module('Unit | Initializer | Routes', {
   beforeEach() {
     Ember.run(() => {
       this.application = Ember.Application.create();
