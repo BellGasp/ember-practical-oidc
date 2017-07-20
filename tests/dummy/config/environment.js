@@ -24,17 +24,15 @@ module.exports = function(environment) {
     }
   };
 
-  ENV.OIDC = {
-    enableLogging: true,
-    initializeRoutes: true,
-    applicationName: process.env.OIDC_APP_NAME,
-    applicationURL: process.env.OIDC_APP_URL,
-    authenticationURL: process.env.OIDC_AUTH_URL,
-    requestedScopes: process.env.OIDC_SCOPES
-  };
-
   if (environment === 'development') {
-
+    ENV.OIDC = {
+      enableLogging: true,
+      initializeRoutes: true,
+      applicationName: process.env.OIDC_APP_NAME,
+      applicationURL: process.env.OIDC_APP_URL,
+      authenticationURL: process.env.OIDC_AUTH_URL,
+      requestedScopes: process.env.OIDC_SCOPES
+    };
   }
 
   if (environment === 'test') {
@@ -46,6 +44,15 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+
+    ENV.OIDC = {
+      enableLogging: true,
+      initializeRoutes: true,
+      applicationName: 'fake-app',
+      applicationURL: 'www.the-most-awesome-application.com',
+      authenticationURL: 'www.sweet-endpoint-bro.com',
+      requestedScopes: 'roles'
+    };
   }
 
   if (environment === 'production') {

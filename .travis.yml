@@ -6,10 +6,9 @@ node_js:
 
 cache:
   directories:
-    - $HOME/.npm
+    - "$HOME/.npm"
 
 env:
-  # we recommend testing LTS's and latest stable release (bonus points to beta/canary)
   - EMBER_TRY_SCENARIO=ember-lts-2.4
   - EMBER_TRY_SCENARIO=ember-lts-2.8
   - EMBER_TRY_SCENARIO=ember-release
@@ -31,15 +30,12 @@ install:
   - npm install
 
 script:
-  # Usually, it's ok to finish the test scenario without reverting
-  #  to the addon's original dependency state, skipping "cleanup".
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO test --skip-cleanup
 
 notifications:
   email: false
   slack:
-    rooms:
-      secure: FbG7q2WitdnQ3TNXP+B7QPGLQ67mf/x5BIGYdiU94AQTHn+DFe9YyBqfAkTjij177eN84bgRxYvHkeuDqvIBSSYmEDXoHzCR+DROseOSzKJ8l5ORjCqwAwUvCWtx5/At1kOAYa9tmYFhkeSuC2GycVsaXzuMzIe1MlaftSUivy3Y3+XhRPd/TkvGrp2wpcdWChv7DKtmFr1aG/pk0DZkhmV2G0d8cl6WAVHYFqh+vCWEMN56B+uhTRdt6lcyMnYq/LubKSq2bllP2auwdHy+WoPGLEVtTQ7VeV62A5JTZmrDvpklfVyUPe4TpkIRP3EOZsC4LDXD9t9ps4+e2Od8UV7T2QIpz3H7lihyEWl3C2f03dfKfR2NeaGnVmV+231U6PTk6k8dq2EDocG9QD2rTmFEr795r2BlhvgeeNoj8dmq88MSgPDCFsA/IX2xNAXmKDaYAJKwThaG2lv7A9U6aCArO6l+EMyWE3VplMnvnM9VGlBlxI4B6bKt/UJtG5R1Fz4LD1H7B/lmFUvdwIOZOLYiU4AvDNA4uWmdSUzIYQGmsQN8I058VXI9oRBmYd8vWHzx3UM3Cjl2O5Jq1KRY0/7hWfxYCkCYQsLKbGxwoWR9EBlM9O/hJC/yhY9FfbvNPKujLt987Yxcky1bt0qa5eQsAuLteaRA+oWV3Jw+jkg=
+    secure: PfW3p/uh4np2nLRrXwqv9EQtdFPzvfnFehvHVUkXgv5xdWDd+kSZaxXOBCj2108nm8CFh8Ku/zE8fnje3N8Fe4LMtfpGuOL81Jl+rvQKG8l+/8M4pe5TYdyaHF6VcxbUkCQppi2hiqqtCdie7faRAXZDb1PGw9pIZhFBU9LcHXhdeP5sMADBJh1zqDkvS3YZQn6Ox4HXA9Q2oJPwHnkg42sLMAprWbnD/uzq1TKouDu0GGxqK89czxPBCjBufLObb2qb60IlwdHAXSjs89OgQBZy1ithLZM5SCwV4Rhv5vCbrgF4TpwGtDNmu06W745+Cyfr0OOzAHW2GuydAQqyhKW+DNoxltFbXdSzqtoZJ34B6eErxxlbeQSNpwLV6wmc6z8O1x4/Z7cIcWvp7C8JOp9kCxm1276k7YbWoNl1+BjQ9YIKhWO0DGurPZmCl74gtDUkphU/AcZvB0k2arUoTj7u2P797Ic6T8T0dBA8RpGiRt1/u+CTm5REnbhZV5EvO8bvZS/OJ6znIvZ3gxAE1ZFZa03xA5QC3cr6Sy3ORTjpASU1tPzGndGbg+GFC4GAHzidYuy5amSF/AV1PHy+Q6a1x6uBw2WQ8ybFswD4/bHY5yiAou0xsOSGKDxZ6MMygghrD+K5lrJC0P49wiOc+wvOgAii6EGv2E5ILJCEn9g=
 
 deploy:
   provider: npm
