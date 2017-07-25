@@ -12,6 +12,8 @@ Like most ember addons, simply run `ember install ember-practical-oidc` and you 
 ## Configuration
 
 ### Mandatory Configuration
+
+#### environment.js
 Here's the mandatory information you'll have to supply the addon using the `config/environment.js` file of your application. Without these four properties, it's impossible to construct a valid authentication payload.
 
 ```js
@@ -22,6 +24,11 @@ ENV.OIDC = {
   requestedScopes: '<THE REQUESTED SCOPES>'
 };
 ```
+
+#### package.json
+It is also currently mandatory that you include `ember-browserify` and `oidc-client` in your `package.json` file. This is due to an existing limitation when using `ember-browserify` in Ember Addons.
+
+`ember install ember-browserify && npm install --save-dev oidc-client`
 
 ### Optional Configuration
 
