@@ -6,7 +6,7 @@ export default Mixin.create({
   session: service(),
 
   authenticate(transition) {
-    if (!this.get('session').isAuthenticated) {
+    if (!this.get('session.isAuthenticated')) {
       this.get('session').authenticate(transition);
       transition.abort();
     }
