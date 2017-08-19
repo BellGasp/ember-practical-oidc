@@ -26,12 +26,20 @@ export default Service.extend({
   init() {
     this._super(...arguments);
 
-    if (OIDC.enableLogging) {
-      Logger.info('OIDC Session Service: Initializing');
+    if (!OIDC && !Ember.testing) {
+      throw new Error('OIDC Session Service: Missing the OIDC configuration object. Please ' +
+        'ensure you have properly declared the `ENV.OIDC` object.');
     }
 
-    this._setEssentialProperties();
-    this._setOptionalProperties();
+    if (OIDC && OIDC.enableLogging) {
+      Logger.info('Practical OIDC :: Session Service: Initializing');
+    }
+
+    if (OIDC) {
+      this._setEssentialProperties();
+      this._setOptionalProperties();
+    }
+
     this._setupUserManager();
   },
 
@@ -50,15 +58,15 @@ export default Service.extend({
             // The popup window was closed, we try and redirect to the specified route
             if (OIDC.failedLoginRoute && typeof OIDC.failedLoginRoute === 'string') {
               if (OIDC.enableLogging) {
-                Logger.info('OIDC Session Service: Attempting to redirect the specified failed ' +
-                  `login route: ${OIDC.failedLoginRoute}.`);
+                Logger.info('Practical OIDC :: Session Service: Attempting to redirect the ' +
+                  `specified failed login route: ${OIDC.failedLoginRoute}.`);
               }
 
               this.get('routing').transitionTo(OIDC.failedLoginRoute);
             } else {
-              Logger.warn('OIDC Session Service: There were no `ENV.OIDC.failedLoginRoute` ' +
-                'property specified in the `config/environment.js` file. No automatic ' +
-                'redirection will be attempted at this time.');
+              Logger.warn('Practical OIDC :: Session Service: There were no ' +
+                '`ENV.OIDC.failedLoginRoute` property specified in the `config/environment.js` ' +
+                'file. No automatic redirection will be attempted at this time.');
             }
           } else {
             throw error;
@@ -84,7 +92,7 @@ export default Service.extend({
   }),
 
   _setEssentialProperties() {
-    let isMissingEssentialInformation =
+    const isMissingEssentialInformation =
       !OIDC.applicationName ||
       !OIDC.applicationURL ||
       !OIDC.authenticationURL ||
@@ -127,11 +135,13 @@ export default Service.extend({
   },
 
   _logOptionalPropertyOverride(propertyName, propertyValue) {
-    Logger.info(`OIDC Session Service: Overriding the default value for the ${propertyName} to: ${propertyValue}.`);
+    Logger.info('Practical OIDC :: Session Service: Overriding the default value for the ' +
+      `${propertyName}  to: ${propertyValue}.`);
   },
 
   _throwOptionalPropertyError(propertyKey) {
-    throw new Error(`OIDC Session Service: Please ensure you have properly set \`${propertyKey}\` in config.environment.js`);
+    throw new Error('Practical OIDC :: Session Service: Please ensure you have properly set ' +
+      `\`${propertyKey}\` in config.environment.js`);
   },
 
   _setupUserManager() {
