@@ -36,23 +36,12 @@ module.exports = function(environment) {
   }
 
   if (environment === 'test') {
-    // Testem prefers this...
     ENV.locationType = 'none';
 
-    // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
-
-    ENV.OIDC = {
-      enableLogging: true,
-      initializeRoutes: true,
-      applicationName: 'fake-app',
-      applicationURL: 'www.the-most-awesome-application.com',
-      authenticationURL: 'www.sweet-endpoint-bro.com',
-      requestedScopes: 'roles'
-    };
   }
 
   if (environment === 'production') {
