@@ -73,7 +73,7 @@ export default Service.extend({
           }
         });
       } else {
-        this.setProperties({ isAuthenticated: true, profile: data.profile });
+        this.setProperties({ isAuthenticated: true, userSession: data });
 
         if (transition) {
           transition.retry();
@@ -84,10 +84,11 @@ export default Service.extend({
 
   routing: service('-routing'),
 
-  profile: alias('userManager.profile'),
+  userSession: null,
+  profile: alias('userSession.profile'),
 
-  roles: computed('userManager.profile.role', function () {
-    let roles = this.get('userManager.profile.role');
+  roles: computed('profile.role', function () {
+    let roles = this.get('profile.role');
     return Array.isArray(roles) ? Ember.A(roles) : Ember.A([roles]);
   }),
 
@@ -170,10 +171,10 @@ export default Service.extend({
     });
 
     $.ajaxSetup({
-      beforeSend: (xhr) => {
-        let userManager = this.get('userManager');
-        if (userManager.access_userManager) {
-          xhr.setRequestHeader('Authorization', `Bearer ${userManager.access_userManager}`);
+      beforeSend: (xhr, settings) => {
+        let userSession = this.get('userSession');
+        if (userSession.access_token && !settings.ignoreAuthorizationHeader) {
+          xhr.setRequestHeader('Authorization', `Bearer ${userSession.access_token}`);
         }
       }
     });
