@@ -46,8 +46,8 @@ export default Service.extend({
   authenticate(transition) {
     this.get('userManager').getUser().then(data => {
       if (!data || data.expired) {
-        this.get('userManager').signinPopup().then(() => {
-          this.set('isAuthenticated', true);
+        this.get('userManager').signinPopup().then(result => {
+          this.setProperties({ isAuthenticated: true, userSession: result });
           if (transition) {
             transition.retry();
           }
