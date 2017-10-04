@@ -10,6 +10,10 @@ module.exports = {
     jquery: true,
     node: true
   },
+  globals: {
+    'UserManager': true,
+    'define': true
+  },
   rules: {
     'indent': ['error', 2],
     'no-unused-vars': ['warn', { 'vars': 'all', 'args': 'after-used' }],

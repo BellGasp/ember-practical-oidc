@@ -11,7 +11,7 @@ module.exports = {
     nodeAssets: {
       'oidc-client': {
         vendor: {
-          srcDir: 'dist',
+          srcDir: 'lib',
           include: ['oidc-client.js'],
           processTree(input) {
             return FastbootTransform(input);
@@ -28,7 +28,7 @@ module.exports = {
     this.import('vendor/oidc-client/oidc-client.js');
     this.import('vendor/shims/oidc-client.js', {
       exports: {
-        'oidc-client': ['default', 'UserManager']
+        'oidc-client': ['UserManager']
       }
     });
   },

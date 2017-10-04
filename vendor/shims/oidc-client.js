@@ -2,10 +2,7 @@
   function vendorModule() {
     'use strict';
 
-    return {
-      'default': Oidc,
-      'UserManager': Oidc.UserManager
-    };
+    return { 'UserManager': UserManager };
   }
 
   define('oidc-client', [], vendorModule);
