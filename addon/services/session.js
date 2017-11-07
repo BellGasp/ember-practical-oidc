@@ -172,9 +172,9 @@ export default Service.extend({
 
     $.ajaxSetup({
       beforeSend: (xhr, settings) => {
-        let userSession = this.get('userSession');
-        if (userSession.access_token && !settings.ignoreAuthorizationHeader) {
-          xhr.setRequestHeader('Authorization', `Bearer ${userSession.access_token}`);
+        let accessToken = this.get('userSession.access_token');
+        if (accessToken && !settings.ignoreAuthorizationHeader) {
+          xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
         }
       }
     });
