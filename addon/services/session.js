@@ -121,7 +121,8 @@ export default Service.extend({
     this._setOptionalProperty('popupRedirectURL', OIDC.popupRedirectURL, 'string');
     this._setOptionalProperty('silentRedirectURL', OIDC.silentRedirectURL, 'string');
     this._setOptionalProperty('responseType', OIDC.responseType, 'string');
-    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL || this.get('localURL'), 'string');
+    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL
+      || this.get('localURL'), 'string');
     this._setOptionalProperty('checkSessionInterval', OIDC.checkSessionInterval, 'number');
     this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
     this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
