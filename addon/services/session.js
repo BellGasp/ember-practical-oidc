@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import config from 'ember-get-config';
-import Oidc from 'npm:oidc-client';
+import { UserManager } from 'oidc-client';
 
 const { Service, Logger, Error, inject: { service }, computed, computed: { alias } } = Ember;
 const { OIDC } = config;
@@ -146,7 +146,7 @@ export default Service.extend({
   },
 
   _setupUserManager() {
-    let userManager = new Oidc.UserManager({
+    let userManager = new UserManager({
       authority: this.get('authenticationURL'),
       client_id: this.get('applicationName'),
       popup_redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
