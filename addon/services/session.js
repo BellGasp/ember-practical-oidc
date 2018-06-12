@@ -23,6 +23,8 @@ export default Service.extend({
   filterProtocolClaims: true,
   loadUserInfo: true,
 
+  didAuthenticate() {},
+
   init() {
     this._super(...arguments);
 
@@ -48,6 +50,9 @@ export default Service.extend({
       if (!data || data.expired) {
         this.get('userManager').signinPopup().then(result => {
           this.setProperties({ isAuthenticated: true, userSession: result });
+
+          this.get('didAuthenticate')();
+
           if (transition) {
             transition.retry();
           }
@@ -74,6 +79,8 @@ export default Service.extend({
         });
       } else {
         this.setProperties({ isAuthenticated: true, userSession: data });
+
+        this.get('didAuthenticate')();
 
         if (transition) {
           transition.retry();
