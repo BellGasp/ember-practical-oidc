@@ -1,8 +1,13 @@
 import Ember from 'ember';
+import Service from '@ember/service';
 import config from 'ember-get-config';
 import Oidc from 'npm:oidc-client';
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { A } from '@ember/array';
 
-const { Service, Logger, Error, inject: { service }, computed, computed: { alias } } = Ember;
+const { Logger } = Ember;
 const { OIDC } = config;
 
 export default Service.extend({
@@ -22,6 +27,8 @@ export default Service.extend({
   automaticSilentRenew: false,
   filterProtocolClaims: true,
   loadUserInfo: true,
+
+  didAuthenticate() {},
 
   init() {
     this._super(...arguments);
@@ -47,7 +54,8 @@ export default Service.extend({
     this.get('userManager').getUser().then(data => {
       if (!data || data.expired) {
         this.get('userManager').signinPopup().then(result => {
-          this.setProperties({ isAuthenticated: true, userSession: result });
+          this._setSuccessfulAuthenticationState(result);
+
           if (transition) {
             transition.retry();
           }
@@ -73,7 +81,7 @@ export default Service.extend({
           }
         });
       } else {
-        this.setProperties({ isAuthenticated: true, userSession: data });
+        this._setSuccessfulAuthenticationState(data);
 
         if (transition) {
           transition.retry();
@@ -89,8 +97,13 @@ export default Service.extend({
 
   roles: computed('profile.role', function () {
     let roles = this.get('profile.role');
-    return Array.isArray(roles) ? Ember.A(roles) : Ember.A([roles]);
+    return Array.isArray(roles) ? A(roles) : A([roles]);
   }),
+
+  _setSuccessfulAuthenticationState(userSession) {
+    this.setProperties({ isAuthenticated: true, userSession });
+    this.get('didAuthenticate')();
+  },
 
   _setEssentialProperties() {
     const isMissingEssentialInformation =

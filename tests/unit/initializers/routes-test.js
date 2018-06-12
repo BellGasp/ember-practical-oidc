@@ -1,12 +1,13 @@
-import Ember from 'ember';
+import Application from '@ember/application';
+import destroyApp from '../../helpers/destroy-app';
 import { initialize } from 'dummy/initializers/routes';
 import { module, test } from 'qunit';
-import destroyApp from '../../helpers/destroy-app';
+import { run } from '@ember/runloop';
 
 module('Unit | Initializer | Routes', {
   beforeEach() {
-    Ember.run(() => {
-      this.application = Ember.Application.create();
+    run(() => {
+      this.application = Application.create();
       this.application.deferReadiness();
     });
   },
