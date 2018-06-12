@@ -49,9 +49,7 @@ export default Service.extend({
     this.get('userManager').getUser().then(data => {
       if (!data || data.expired) {
         this.get('userManager').signinPopup().then(result => {
-          this.setProperties({ isAuthenticated: true, userSession: result });
-
-          this.get('didAuthenticate')();
+          this._setSuccessfulAuthenticationState(result);
 
           if (transition) {
             transition.retry();
@@ -78,9 +76,7 @@ export default Service.extend({
           }
         });
       } else {
-        this.setProperties({ isAuthenticated: true, userSession: data });
-
-        this.get('didAuthenticate')();
+        this._setSuccessfulAuthenticationState(data);
 
         if (transition) {
           transition.retry();
@@ -98,6 +94,11 @@ export default Service.extend({
     let roles = this.get('profile.role');
     return Array.isArray(roles) ? Ember.A(roles) : Ember.A([roles]);
   }),
+
+  _setSuccessfulAuthenticationState(userSession) {
+    this.setProperties({ isAuthenticated: true, userSession });
+    this.get('didAuthenticate')();
+  },
 
   _setEssentialProperties() {
     const isMissingEssentialInformation =
