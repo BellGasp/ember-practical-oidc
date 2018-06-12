@@ -1,8 +1,13 @@
 import Ember from 'ember';
+import Service from '@ember/service';
 import config from 'ember-get-config';
 import Oidc from 'npm:oidc-client';
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { A } from '@ember/array';
 
-const { Service, Logger, Error, inject: { service }, computed, computed: { alias } } = Ember;
+const { Logger } = Ember;
 const { OIDC } = config;
 
 export default Service.extend({
@@ -92,7 +97,7 @@ export default Service.extend({
 
   roles: computed('profile.role', function () {
     let roles = this.get('profile.role');
-    return Array.isArray(roles) ? Ember.A(roles) : Ember.A([roles]);
+    return Array.isArray(roles) ? A(roles) : A([roles]);
   }),
 
   _setSuccessfulAuthenticationState(userSession) {
