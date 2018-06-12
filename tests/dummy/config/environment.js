@@ -45,9 +45,5 @@ module.exports = function(environment) {
     ENV.APP.autoboot = false;
   }
 
-  if (environment === 'production') {
-
-  }
-
   return ENV;
 };
