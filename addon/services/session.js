@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import Service from '@ember/service';
 import config from 'ember-get-config';
-import Oidc from 'npm:oidc-client';
+import Oidc from 'oidc-client';
 import { computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';

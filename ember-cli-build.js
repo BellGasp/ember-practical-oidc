@@ -10,6 +10,12 @@ module.exports = function(defaults) {
     }
   });
 
+  app.import('node_modules/oidc-client/index.js', {
+    using: [
+      { transformation: 'cjs', as: 'oidc-client'}
+    ]
+  });
+
   /*
     This build file specifies the options for the dummy test app of this
     addon, located in `/tests/dummy`
