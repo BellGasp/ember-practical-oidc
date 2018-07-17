@@ -12,7 +12,7 @@ module.exports = function(defaults) {
 
   app.import('node_modules/oidc-client/index.js', {
     using: [
-      { transformation: 'cjs', as: 'oidc-client'}
+      { transformation: 'cjs', as: 'oidc-client' }
     ]
   });
 
