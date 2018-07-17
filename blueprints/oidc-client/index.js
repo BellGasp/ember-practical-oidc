@@ -1,6 +1,8 @@
 /* eslint-env node */
 module.exports = {
   description: '',
+  normalizeEntityName() {
+  },
   afterInstall() {
     // Add addons to package.json and run defaultBlueprint
     return this.addAddonsToProject({
