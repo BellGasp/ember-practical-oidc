@@ -71,7 +71,7 @@ export default Service.extend({
                   `specified failed login route: ${OIDC.failedLoginRoute}.`);
               }
 
-              this.get('routing').transitionTo(OIDC.failedLoginRoute);
+              this.get('router').transitionTo(OIDC.failedLoginRoute);
             } else {
               /* eslint-disable-next-line no-console */
               console.warn('Practical OIDC :: Session Service: There were no ' +
@@ -92,7 +92,7 @@ export default Service.extend({
     });
   },
 
-  routing: service('-routing'),
+  router: service('router'),
 
   userSession: null,
   profile: alias('userSession.profile'),
