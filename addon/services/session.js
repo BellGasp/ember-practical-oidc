@@ -1,14 +1,13 @@
 import Ember from 'ember';
 import Service from '@ember/service';
-import config from 'ember-get-config';
-import Oidc from 'npm:oidc-client';
+import Oidc from 'oidc-client';
+import Configuration from 'ember-get-config';
 import { computed } from '@ember/object';
 import { alias } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { A } from '@ember/array';
 
-const { Logger } = Ember;
-const { OIDC } = config;
+const { OIDC } = Configuration;
 
 export default Service.extend({
   userManager: null,
@@ -39,7 +38,8 @@ export default Service.extend({
     }
 
     if (OIDC && OIDC.enableLogging) {
-      Logger.info('Practical OIDC :: Session Service: Initializing');
+      /* eslint-disable-next-line no-console */
+      console.info('Practical OIDC :: Session Service: Initializing');
     }
 
     if (OIDC) {
@@ -66,13 +66,15 @@ export default Service.extend({
             // The popup window was closed, we try and redirect to the specified route
             if (OIDC.failedLoginRoute && typeof OIDC.failedLoginRoute === 'string') {
               if (OIDC.enableLogging) {
-                Logger.info('Practical OIDC :: Session Service: Attempting to redirect the ' +
+                /* eslint-disable-next-line no-console */
+                console.info('Practical OIDC :: Session Service: Attempting to redirect the ' +
                   `specified failed login route: ${OIDC.failedLoginRoute}.`);
               }
 
-              this.get('routing').transitionTo(OIDC.failedLoginRoute);
+              this.get('router').transitionTo(OIDC.failedLoginRoute);
             } else {
-              Logger.warn('Practical OIDC :: Session Service: There were no ' +
+              /* eslint-disable-next-line no-console */
+              console.warn('Practical OIDC :: Session Service: There were no ' +
                 '`ENV.OIDC.failedLoginRoute` property specified in the `config/environment.js` ' +
                 'file. No automatic redirection will be attempted at this time.');
             }
@@ -90,13 +92,13 @@ export default Service.extend({
     });
   },
 
-  routing: service('-routing'),
+  router: service('router'),
 
   userSession: null,
   profile: alias('userSession.profile'),
 
   roles: computed('profile.role', function () {
-    let roles = this.get('profile.role');
+    const roles = this.get('profile.role');
     return Array.isArray(roles) ? A(roles) : A([roles]);
   }),
 
@@ -149,7 +151,8 @@ export default Service.extend({
   },
 
   _logOptionalPropertyOverride(propertyName, propertyValue) {
-    Logger.info('Practical OIDC :: Session Service: Overriding the default value for the ' +
+    /* eslint-disable-next-line no-console */
+    console.info('Practical OIDC :: Session Service: Overriding the default value for the ' +
       `${propertyName}  to: ${propertyValue}.`);
   },
 
@@ -185,9 +188,9 @@ export default Service.extend({
 
     $.ajaxSetup({
       beforeSend: (xhr, settings) => {
-        let accessToken = this.get('userSession.access_token');
-        if (accessToken && !settings.ignoreAuthorizationHeader) {
-          xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+        const token = this.get('userSession.access_token');
+        if (token && !settings.ignoreAuthorizationHeader) {
+          xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }
       }
     });

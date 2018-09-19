@@ -1,31 +1,33 @@
 import Router from '../router';
 import Ember from 'ember';
-import config from 'ember-get-config';
+import Configuration from 'ember-get-config';
 
-const { Logger } = Ember;
-const { OIDC } = config;
+const { OIDC } = Configuration;
 
 export function initialize() {
   if (!OIDC) {
-    Ember.Logger.warn('Practical OIDC :: Routes Initializer: No OIDC configuration found ' +
+    /* eslint-disable-next-line no-console */
+    console.warn('Practical OIDC :: Routes Initializer: No OIDC configuration found ' +
       '-- Skipping routes initialization.');
   }
 
-  let configs = OIDC || { initializeRoutes: false, enableLogging: false };
+  const configuration = OIDC || { initializeRoutes: false, enableLogging: false };
 
-  if (configs.initializeRoutes && !Ember.testing) {
+  if (configuration.initializeRoutes && !Ember.testing) {
     Router.map(function () {
       this.route('popup');
       this.route('renew');
     });
 
-    if (configs.enableLogging) {
-      Logger.info('Practical OIDC :: Routes Initializer: Routes (popup + renew) have been ' +
+    if (configuration.enableLogging) {
+      /* eslint-disable-next-line no-console */
+      console.info('Practical OIDC :: Routes Initializer: Routes (popup + renew) have been ' +
         'initialized.');
     }
   } else {
-    if (configs.enableLogging) {
-      Logger.info('Practical OIDC :: Routes Initializer: Route initialization has been skipped.');
+    if (configuration.enableLogging) {
+      /* eslint-disable-next-line no-console */
+      console.info('Practical OIDC :: Routes Initializer: Route initialization has been skipped.');
     }
   }
 }
