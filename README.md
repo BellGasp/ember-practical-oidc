@@ -25,11 +25,6 @@ ENV.OIDC = {
 };
 ```
 
-#### package.json
-It is also currently mandatory that you include `ember-browserify` and `oidc-client` in your `package.json` file. This is due to an existing limitation when using `ember-browserify` in Ember Addons.
-
-`ember install ember-browserify && npm install --save-dev oidc-client`
-
 ### Optional Configuration
 
 Here are the additional configuration parameters that are available.
