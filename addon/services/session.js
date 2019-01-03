@@ -62,7 +62,8 @@ export default Service.extend({
         }, (error) => {
           this.set('isAuthenticated', false);
 
-          if (error.message === 'Popup window closed') {
+          if (error.message === 'Popup window closed' || // Closed the pop up manually
+          error.message === 'Error opening popup window') { // Pop-up bloquer closed the windows
             // The popup window was closed, we try and redirect to the specified route
             if (OIDC.failedLoginRoute && typeof OIDC.failedLoginRoute === 'string') {
               if (OIDC.enableLogging) {
