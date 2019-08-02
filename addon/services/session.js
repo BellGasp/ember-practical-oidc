@@ -17,7 +17,8 @@ export default Service.extend({
   applicationURL: null,
   authenticationURL: null,
   requestedScopes: null,
-
+  usePopup: true,
+  transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
   responseType: 'id_token token',
@@ -27,7 +28,9 @@ export default Service.extend({
   filterProtocolClaims: true,
   loadUserInfo: true,
 
-  didAuthenticate() {},
+  didAuthenticate() {
+    
+  },
 
   init() {
     this._super(...arguments);
@@ -51,14 +54,22 @@ export default Service.extend({
   },
 
   authenticate(transition) {
-    this.get('userManager').getUser().then(data => {
+    return this.get('userManager').getUser().then(async data => {
       if (!data || data.expired) {
-        this.get('userManager').signinPopup().then(result => {
+        let userMgr = this.get('userManager');
+        var redirectPromise = null;
+        if(this.usePopup)
+        {
+          redirectPromise = userMgr.signinPopup();
+        } else {
+          redirectPromise = userMgr.signinRedirect();
+        }
+        return await redirectPromise.then(result => {
           this._setSuccessfulAuthenticationState(result);
-
           if (transition) {
             transition.retry();
           }
+          return result;
         }, (error) => {
           this.set('isAuthenticated', false);
 
@@ -90,6 +101,8 @@ export default Service.extend({
           transition.retry();
         }
       }
+
+      return data;
     });
   },
 
@@ -138,10 +151,12 @@ export default Service.extend({
     this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
     this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
     this._setOptionalProperty('loadUserInfo', OIDC.loadUserInfo, 'boolean');
+    this._setOptionalProperty('transitionToRedirect', OIDC.transitionToRedirect, 'string');
+    this._setOptionalProperty('usePopup', OIDC.usePopup, 'boolean');
   },
 
   _setOptionalProperty(propertyName, propertyValue, propertyType) {
-    if (propertyValue) {
+    if (propertyValue !== undefined) {
       if (typeof propertyValue === propertyType) {
         this._logOptionalPropertyOverride(propertyName, propertyValue);
         this.set(`${propertyName}`, propertyValue);
@@ -168,11 +183,12 @@ export default Service.extend({
       client_id: this.get('applicationName'),
       popup_redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       automaticSilentRenew: this.get('automaticSilentRenew'),
-      silent_redirect_uri: `${this.get('localURL')}/${this.get('silentRedirectURL')}`,
+      silent_redirect_uri: `${this.get('applicationURL')}/${this.get('silentRedirectURL')}`,
       checkSessionInterval: this.get('checkSessionInterval'),
+      redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       response_type: this.get('responseType'),
       scope: this.get('requestedScopes'),
-      post_logout_redirect_uri: `${this.get('localURL')}/${this.get('postLogoutRedirectURL')}`,
+      post_logout_redirect_uri: `${this.get('applicationURL')}/${this.get('postLogoutRedirectURL')}`,
       filter_protocol_claims: this.get('filterProtocolClaims'),
       loadUserInfo: this.get('loadUserInfo')
     });
@@ -188,8 +204,9 @@ export default Service.extend({
     });
 
     $.ajaxSetup({
-      beforeSend: (xhr, settings) => {
-        const token = this.get('userSession.access_token');
+      beforeSend: async (xhr, settings) => {
+        let data = await this.get('userManager').getUser();
+        const token = data.access_token;
         if (token && !settings.ignoreAuthorizationHeader) {
           xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }

@@ -39,6 +39,11 @@ Here are the additional configuration parameters that are available.
 | automaticSilentRenew | false | boolean |
 | filterProtocolClaims | true | boolean |
 | loadUserInfo | true | boolean |
+| transitionToRedirect | null | string |
+| usePopup | true | boolean |
+
+### to use the redirection logic instead of the default popup
+set `usePopup` to `false` and give the post login transition to execute to `transitionToRedirect`
 
 ### Route Initialization Configuration
 
