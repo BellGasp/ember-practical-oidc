@@ -1,6 +1,9 @@
-/* eslint-env node */
 'use strict';
 
 module.exports = {
-  name: 'ember-practical-oidc'
+  name: 'ember-practical-oidc',
+
+  isDevelopingAddon: function() {
+    return true;
+  }
 };

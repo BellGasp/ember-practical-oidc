@@ -1,7 +1,5 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 import AuthenticationMixin from 'ember-practical-oidc/mixins/authentication';
-
-const { Route } = Ember;
 
 export default Route.extend(AuthenticationMixin, {
   beforeModel(transition) {

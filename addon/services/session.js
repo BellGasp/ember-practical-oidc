@@ -1,9 +1,13 @@
 import Ember from 'ember';
-import config from 'ember-get-config';
-import Oidc from 'npm:oidc-client';
+import Service from '@ember/service';
+import Oidc from 'oidc-client';
+import Configuration from 'ember-get-config';
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { A } from '@ember/array';
 
-const { Service, Logger, Error, inject: { service }, computed, computed: { alias } } = Ember;
-const { OIDC } = config;
+const { OIDC } = Configuration;
 
 export default Service.extend({
   userManager: null,
@@ -13,7 +17,8 @@ export default Service.extend({
   applicationURL: null,
   authenticationURL: null,
   requestedScopes: null,
-
+  usePopup: true,
+  transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
   responseType: 'id_token token',
@@ -27,6 +32,10 @@ export default Service.extend({
     return this.get('routing.router.location.location.origin');
   }),
 
+  didAuthenticate() {
+    
+  },
+
   init() {
     this._super(...arguments);
 
@@ -36,7 +45,8 @@ export default Service.extend({
     }
 
     if (OIDC && OIDC.enableLogging) {
-      Logger.info('Practical OIDC :: Session Service: Initializing');
+      /* eslint-disable-next-line no-console */
+      console.info('Practical OIDC :: Session Service: Initializing');
     }
 
     if (OIDC) {
@@ -48,27 +58,39 @@ export default Service.extend({
   },
 
   authenticate(transition) {
-    this.get('userManager').getUser().then(data => {
+    return this.get('userManager').getUser().then(async data => {
       if (!data || data.expired) {
-        this.get('userManager').signinPopup().then(result => {
-          this.setProperties({ isAuthenticated: true, userSession: result });
+        let userMgr = this.get('userManager');
+        var redirectPromise = null;
+        if(this.usePopup)
+        {
+          redirectPromise = userMgr.signinPopup();
+        } else {
+          redirectPromise = userMgr.signinRedirect();
+        }
+        return await redirectPromise.then(result => {
+          this._setSuccessfulAuthenticationState(result);
           if (transition) {
             transition.retry();
           }
+          return result;
         }, (error) => {
           this.set('isAuthenticated', false);
 
-          if (error.message === 'Popup window closed') {
+          if (error.message === 'Popup window closed' || // Closed the pop up manually
+          error.message === 'Error opening popup window') { // Pop-up bloquer closed the windows
             // The popup window was closed, we try and redirect to the specified route
             if (OIDC.failedLoginRoute && typeof OIDC.failedLoginRoute === 'string') {
               if (OIDC.enableLogging) {
-                Logger.info('Practical OIDC :: Session Service: Attempting to redirect the ' +
+                /* eslint-disable-next-line no-console */
+                console.info('Practical OIDC :: Session Service: Attempting to redirect the ' +
                   `specified failed login route: ${OIDC.failedLoginRoute}.`);
               }
 
-              this.get('routing').transitionTo(OIDC.failedLoginRoute);
+              this.get('router').transitionTo(OIDC.failedLoginRoute);
             } else {
-              Logger.warn('Practical OIDC :: Session Service: There were no ' +
+              /* eslint-disable-next-line no-console */
+              console.warn('Practical OIDC :: Session Service: There were no ' +
                 '`ENV.OIDC.failedLoginRoute` property specified in the `config/environment.js` ' +
                 'file. No automatic redirection will be attempted at this time.');
             }
@@ -77,24 +99,31 @@ export default Service.extend({
           }
         });
       } else {
-        this.setProperties({ isAuthenticated: true, userSession: data });
+        this._setSuccessfulAuthenticationState(data);
 
         if (transition) {
           transition.retry();
         }
       }
+
+      return data;
     });
   },
 
-  routing: service('-routing'),
+  router: service('router'),
 
   userSession: null,
   profile: alias('userSession.profile'),
 
   roles: computed('profile.role', function () {
-    let roles = this.get('profile.role');
-    return Array.isArray(roles) ? Ember.A(roles) : Ember.A([roles]);
+    const roles = this.get('profile.role');
+    return Array.isArray(roles) ? A(roles) : A([roles]);
   }),
+
+  _setSuccessfulAuthenticationState(userSession) {
+    this.setProperties({ isAuthenticated: true, userSession });
+    this.get('didAuthenticate')();
+  },
 
   _setEssentialProperties() {
     const isMissingEssentialInformation =
@@ -127,10 +156,12 @@ export default Service.extend({
     this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
     this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
     this._setOptionalProperty('loadUserInfo', OIDC.loadUserInfo, 'boolean');
+    this._setOptionalProperty('transitionToRedirect', OIDC.transitionToRedirect, 'string');
+    this._setOptionalProperty('usePopup', OIDC.usePopup, 'boolean');
   },
 
   _setOptionalProperty(propertyName, propertyValue, propertyType) {
-    if (propertyValue) {
+    if (propertyValue !== undefined) {
       if (typeof propertyValue === propertyType) {
         this._logOptionalPropertyOverride(propertyName, propertyValue);
         this.set(`${propertyName}`, propertyValue);
@@ -141,7 +172,8 @@ export default Service.extend({
   },
 
   _logOptionalPropertyOverride(propertyName, propertyValue) {
-    Logger.info('Practical OIDC :: Session Service: Overriding the default value for the ' +
+    /* eslint-disable-next-line no-console */
+    console.info('Practical OIDC :: Session Service: Overriding the default value for the ' +
       `${propertyName}  to: ${propertyValue}.`);
   },
 
@@ -156,8 +188,9 @@ export default Service.extend({
       client_id: this.get('applicationName'),
       popup_redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       automaticSilentRenew: this.get('automaticSilentRenew'),
-      silent_redirect_uri: `${this.get('localURL')}/${this.get('silentRedirectURL')}`,
+      silent_redirect_uri: `${this.get('applicationURL')}/${this.get('silentRedirectURL')}`,
       checkSessionInterval: this.get('checkSessionInterval'),
+      redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       response_type: this.get('responseType'),
       scope: this.get('requestedScopes'),
       post_logout_redirect_uri: `${this.get('postLogoutRedirectURL')}`,
@@ -176,10 +209,11 @@ export default Service.extend({
     });
 
     $.ajaxSetup({
-      beforeSend: (xhr, settings) => {
-        let accessToken = this.get('userSession.access_token');
-        if (accessToken && !settings.ignoreAuthorizationHeader) {
-          xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+      beforeSend: async (xhr, settings) => {
+        let data = await this.get('userManager').getUser();
+        const token = data.access_token;
+        if (token && !settings.ignoreAuthorizationHeader) {
+          xhr.setRequestHeader('Authorization', `Bearer ${token}`);
         }
       }
     });
