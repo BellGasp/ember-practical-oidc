@@ -28,6 +28,10 @@ export default Service.extend({
   filterProtocolClaims: true,
   loadUserInfo: true,
 
+  localURL: computed(function () {
+    return this.get('routing.router.location.location.origin');
+  }),
+
   didAuthenticate() {
     
   },
@@ -146,7 +150,8 @@ export default Service.extend({
     this._setOptionalProperty('popupRedirectURL', OIDC.popupRedirectURL, 'string');
     this._setOptionalProperty('silentRedirectURL', OIDC.silentRedirectURL, 'string');
     this._setOptionalProperty('responseType', OIDC.responseType, 'string');
-    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL, 'string');
+    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL
+      || this.get('localURL'), 'string');
     this._setOptionalProperty('checkSessionInterval', OIDC.checkSessionInterval, 'number');
     this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
     this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
@@ -188,7 +193,7 @@ export default Service.extend({
       redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       response_type: this.get('responseType'),
       scope: this.get('requestedScopes'),
-      post_logout_redirect_uri: `${this.get('applicationURL')}/${this.get('postLogoutRedirectURL')}`,
+      post_logout_redirect_uri: `${this.get('postLogoutRedirectURL')}`,
       filter_protocol_claims: this.get('filterProtocolClaims'),
       loadUserInfo: this.get('loadUserInfo')
     });
