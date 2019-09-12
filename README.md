@@ -41,9 +41,16 @@ Here are the additional configuration parameters that are available.
 | loadUserInfo | true | boolean |
 | transitionToRedirect | null | string |
 | usePopup | true | boolean |
+| useInPlaceRedirect | true | boolean |
+| transitionExceptionList | true | string[] |
 
 ### to use the redirection logic instead of the default popup
 set `usePopup` to `false` and give the post login transition to execute to `transitionToRedirect`
+
+optionally set `useInPlaceRedirect` to return to the same route after login, by default the root "/" will be ignored from this redirection and redirect to `transitionToRedirect` instead.
+
+this behaviour can be controlled by an exception list. every route found in `transitionExceptionList` will transition back to `transitionToRedirect`.
+
 
 ### Route Initialization Configuration
 

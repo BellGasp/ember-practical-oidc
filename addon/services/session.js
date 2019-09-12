@@ -18,6 +18,8 @@ export default Service.extend({
   authenticationURL: null,
   requestedScopes: null,
   usePopup: true,
+  useInPlaceRedirect: false,
+  transitionExceptionList: null,
   transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
@@ -49,6 +51,8 @@ export default Service.extend({
       console.info('Practical OIDC :: Session Service: Initializing');
     }
 
+    this.transitionExceptionList = [""];
+
     if (OIDC) {
       this._setEssentialProperties();
       this._setOptionalProperties();
@@ -58,10 +62,16 @@ export default Service.extend({
   },
 
   authenticate(transition) {
+    let lS = window.localStorage;
     return this.get('userManager').getUser().then(async data => {
       if (!data || data.expired) {
         let userMgr = this.get('userManager');
         var redirectPromise = null;
+        if(this.useInPlaceRedirect)
+        {
+          lS.setItem(`${this.applicationName}-redirectTo`,transition.intent.url || "");
+        }
+
         if(this.usePopup)
         {
           redirectPromise = userMgr.signinPopup();
@@ -105,7 +115,6 @@ export default Service.extend({
           transition.retry();
         }
       }
-
       return data;
     });
   },
@@ -158,6 +167,9 @@ export default Service.extend({
     this._setOptionalProperty('loadUserInfo', OIDC.loadUserInfo, 'boolean');
     this._setOptionalProperty('transitionToRedirect', OIDC.transitionToRedirect, 'string');
     this._setOptionalProperty('usePopup', OIDC.usePopup, 'boolean');
+    this._setOptionalProperty('useInPlaceRedirect', OIDC.useInPlaceRedirect, 'boolean');
+    this._setOptionalProperty('transitionExceptionList', OIDC.transitionExceptionList, 'object');
+
   },
 
   _setOptionalProperty(propertyName, propertyValue, propertyType) {
@@ -217,5 +229,6 @@ export default Service.extend({
         }
       }
     });
+
   }
 });

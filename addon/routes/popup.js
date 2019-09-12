@@ -14,7 +14,19 @@ export default Route.extend({
     else {
       await this.get('session.userManager').signinRedirectCallback();
       if(session.transitionToRedirect)
-      await session.authenticate(this.transitionTo(session.transitionToRedirect));
+      {
+        let transition = session.transitionToRedirect;
+        if(session.useInPlaceRedirect){
+          let lS = window.localStorage;
+          let transitionUrl = lS.getItem(`${session.applicationName}-redirectTo`);
+          if(transitionUrl &&
+            session.transitionExceptionList.indexOf(transitionUrl) === -1){
+            transition = transitionUrl
+          }
+        }
+        await session.authenticate(this.transitionTo(transition));
+      }
+
     }
   }
 });
