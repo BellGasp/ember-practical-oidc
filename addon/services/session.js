@@ -19,8 +19,7 @@ export default Service.extend({
   requestedScopes: null,
   usePopup: true,
   useInPlaceRedirect: false,
-  transitionExceptionList: [''],
-
+  transitionExceptionList: null,
   transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
@@ -51,6 +50,8 @@ export default Service.extend({
       /* eslint-disable-next-line no-console */
       console.info('Practical OIDC :: Session Service: Initializing');
     }
+
+    this.transitionExceptionList = [""];
 
     if (OIDC) {
       this._setEssentialProperties();
