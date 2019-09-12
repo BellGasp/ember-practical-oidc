@@ -20,6 +20,7 @@ export default Service.extend({
   usePopup: true,
   useInPlaceRedirect: false,
   transitionExceptionList: [''],
+
   transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
@@ -65,7 +66,6 @@ export default Service.extend({
       if (!data || data.expired) {
         let userMgr = this.get('userManager');
         var redirectPromise = null;
-
         if(this.useInPlaceRedirect)
         {
           lS.setItem(`${this.applicationName}-redirectTo`,transition.intent.url || "");
@@ -168,7 +168,7 @@ export default Service.extend({
     this._setOptionalProperty('usePopup', OIDC.usePopup, 'boolean');
     this._setOptionalProperty('useInPlaceRedirect', OIDC.useInPlaceRedirect, 'boolean');
     this._setOptionalProperty('transitionExceptionList', OIDC.transitionExceptionList, 'object');
-    
+
   },
 
   _setOptionalProperty(propertyName, propertyValue, propertyType) {

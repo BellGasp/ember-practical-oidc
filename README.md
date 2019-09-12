@@ -51,6 +51,7 @@ optionally set `useInPlaceRedirect` to return to the same route after login, by 
 
 this behaviour can be controlled by an exception list. every route found in `transitionExceptionList` will transition back to `transitionToRedirect`.
 
+
 ### Route Initialization Configuration
 
 The addon is able to automatically create the `renew` and `popup` routes for you. If that's what you want, simply set the `ENV.OIDC.initializeRoutes` environmnet variable to `true` in your `config/environment.js` file.

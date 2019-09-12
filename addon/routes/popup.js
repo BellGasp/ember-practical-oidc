@@ -26,6 +26,7 @@ export default Route.extend({
         }
         await session.authenticate(this.transitionTo(transition));
       }
+
     }
   }
 });
