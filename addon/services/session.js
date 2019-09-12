@@ -18,6 +18,8 @@ export default Service.extend({
   authenticationURL: null,
   requestedScopes: null,
   usePopup: true,
+  useInPlaceRedirect: false,
+  transitionExceptionList: [''],
   transitionToRedirect: null,
   popupRedirectURL: 'popup',
   silentRedirectURL: 'renew',
@@ -27,6 +29,10 @@ export default Service.extend({
   automaticSilentRenew: false,
   filterProtocolClaims: true,
   loadUserInfo: true,
+
+  localURL: computed(function () {
+    return this.get('routing.router.location.location.origin');
+  }),
 
   didAuthenticate() {
     
@@ -54,10 +60,17 @@ export default Service.extend({
   },
 
   authenticate(transition) {
+    let lS = window.localStorage;
     return this.get('userManager').getUser().then(async data => {
       if (!data || data.expired) {
         let userMgr = this.get('userManager');
         var redirectPromise = null;
+
+        if(this.useInPlaceRedirect)
+        {
+          lS.setItem(`${this.applicationName}-redirectTo`,transition.intent.url || "");
+        }
+
         if(this.usePopup)
         {
           redirectPromise = userMgr.signinPopup();
@@ -101,7 +114,6 @@ export default Service.extend({
           transition.retry();
         }
       }
-
       return data;
     });
   },
@@ -146,13 +158,17 @@ export default Service.extend({
     this._setOptionalProperty('popupRedirectURL', OIDC.popupRedirectURL, 'string');
     this._setOptionalProperty('silentRedirectURL', OIDC.silentRedirectURL, 'string');
     this._setOptionalProperty('responseType', OIDC.responseType, 'string');
-    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL, 'string');
+    this._setOptionalProperty('postLogoutRedirectURL', OIDC.postLogoutRedirectURL
+      || this.get('localURL'), 'string');
     this._setOptionalProperty('checkSessionInterval', OIDC.checkSessionInterval, 'number');
     this._setOptionalProperty('automaticSilentRenew', OIDC.automaticSilentRenew, 'boolean');
     this._setOptionalProperty('filterProtocolClaims', OIDC.filterProtocolClaims, 'boolean');
     this._setOptionalProperty('loadUserInfo', OIDC.loadUserInfo, 'boolean');
     this._setOptionalProperty('transitionToRedirect', OIDC.transitionToRedirect, 'string');
     this._setOptionalProperty('usePopup', OIDC.usePopup, 'boolean');
+    this._setOptionalProperty('useInPlaceRedirect', OIDC.useInPlaceRedirect, 'boolean');
+    this._setOptionalProperty('transitionExceptionList', OIDC.transitionExceptionList, 'object');
+    
   },
 
   _setOptionalProperty(propertyName, propertyValue, propertyType) {
@@ -188,7 +204,7 @@ export default Service.extend({
       redirect_uri: `${this.get('applicationURL')}/${this.get('popupRedirectURL')}`,
       response_type: this.get('responseType'),
       scope: this.get('requestedScopes'),
-      post_logout_redirect_uri: `${this.get('applicationURL')}/${this.get('postLogoutRedirectURL')}`,
+      post_logout_redirect_uri: `${this.get('postLogoutRedirectURL')}`,
       filter_protocol_claims: this.get('filterProtocolClaims'),
       loadUserInfo: this.get('loadUserInfo')
     });
@@ -212,5 +228,6 @@ export default Service.extend({
         }
       }
     });
+
   }
 });
