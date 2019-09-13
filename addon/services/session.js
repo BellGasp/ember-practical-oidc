@@ -63,9 +63,9 @@ export default Service.extend({
 
   authenticate(transition) {
     let lS = window.localStorage;
-    return this.get('userManager').getUser().then(async data => {
+    let userMgr = this.get('userManager');
+    return userMgr.getUser().then(async data => {
       if (!data || data.expired) {
-        let userMgr = this.get('userManager');
         var redirectPromise = null;
         if(this.useInPlaceRedirect)
         {
@@ -115,6 +115,7 @@ export default Service.extend({
           transition.retry();
         }
       }
+      userMgr.clearStaleState();
       return data;
     });
   },
