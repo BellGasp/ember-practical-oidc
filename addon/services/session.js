@@ -12,6 +12,8 @@ const { OIDC } = Configuration;
 export default Service.extend({
   userManager: null,
   isAuthenticated: false,
+  backgroundTask: null,
+  silentRenewActive: false,
 
   applicationName: null,
   applicationURL: null,
