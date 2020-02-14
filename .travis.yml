@@ -1,68 +1,50 @@
----
 language: node_js
 node_js:
-  # we recommend testing addons with the same minimum supported node version as Ember CLI
-  # so that your addon works for all apps
-  - "10"
-
+  - '10'
 sudo: false
 dist: trusty
-
 addons:
   chrome: stable
-
 cache:
   directories:
-    - $HOME/.npm
-
+    - "$HOME/.npm"
 env:
   global:
-    # See https://git.io/vdao3 for details.
     - JOBS=1
-
 jobs:
   fail_fast: true
   allow_failures:
     - env: EMBER_TRY_SCENARIO=ember-canary
-
   include:
-    # runs linting and tests with current locked deps
-
-    - stage: "Tests"
-      name: "Tests"
+    - stage: Tests
+      name: Tests
       script:
-        - npm run lint:hbs
-        - npm run lint:js
-        - npm test
-
-    # we recommend new addons test the current and previous LTS
-    # as well as latest stable release (bonus points to beta/canary)
-    - stage: "Additional Tests"
+      - npm run lint:hbs
+      - npm run lint:js
+      - npm test
+    - stage: Additional Tests
       env: EMBER_TRY_SCENARIO=ember-lts-2.16
     - env: EMBER_TRY_SCENARIO=ember-lts-2.18
     - env: EMBER_TRY_SCENARIO=ember-release
     - env: EMBER_TRY_SCENARIO=ember-beta
     - env: EMBER_TRY_SCENARIO=ember-canary
     - env: EMBER_TRY_SCENARIO=ember-default-with-jquery
-
 before_install:
   - npm config set spin false
   - npm install -g npm@4
   - npm --version
-
 script:
   - node_modules/.bin/ember try:one $EMBER_TRY_SCENARIO
-
 notifications:
   email: false
   slack:
     secure: qR0RsSjekTvOAAKtqfwtGtHL8vEeC8UznSkGMFFpHwoe+pPd9BANG7QPilR5TdLOsUKSVGmRfh5xhVsmUflmvGD822itjKIiTRpTL4BK4b9f1OhPrn9WsoSzZvMwwZTO2LJahP+qgOHkzp+LtKhfgar62Kkbns+GBu4xjlgk6NKmMtC/unWaKLL2TjPRlDBrwNyQ3BZhQ4Kdh5+FrRVMRV2HWPm30boFetcbnF7NmBPRDpqHAgkvhhu+0AFcTG9/DBvS44HRroL4hycHMwzwdzS53FeE2SyaRsfsJ2rDyvl4NagDvGpRPO0sLNjh4jUU0arNmi8NN2395OTr09ETtfK48XbDSOdZPTnnKMxe7H7Up2CzvAKyO7c7Zn2+HCSYwMXzyYDLUd9GanWEhwuL6lre2GIRisMf2UPyKVZKlUFI1knxuTfRfPGVNGUxK8fStxkaoRd5rXVwqs2ikMC3egS3QeY5AwN8AZGugDfB5R7KtQFsPOK6nWpZau/4UR5O4bEopq5kyfKcxFWu/x3s+H3T5bAAzpOGrvMr7PH0/J/7mEOe9Dbo4WoaBs35uYbNVENbUd++tX2yyY5yDG9PAdywjFksAasrm1+59UZmiEoGoitUXL33iF7lttBl239LwDVrbsl4IV5MQaQw7fI+WWZljaGF1RQYw5bYPD1erzo=
-
 deploy:
   provider: npm
-  email: ohnoesmyoreos@gmail.com
+  email: bobby_mousseau@hotmail.com
   api_key:
-    secure: B6g/rYQbj01TPH+RcoBNLXtmWrQLQ6AcS1sJDXgs3Wu7d3yc/vKcKb+k7vUcEP8SyFLjy/wlib2+jRe9ellJhQuFZUofneld89/VPUQ4b3Qbmzq7PCMJEM4bXRr0CYG0NuSP5uQL3lLcfmJs7z4o//0xRnOcKYHMZtC20jQcSvdsYpw7Fd0Aa78QG2tkfGE2BEMg5gacMg2MtfRECJuMLVQY3m7WbUWMWDFd8oVk+Bu3A0KWkJB+ywdCep16K4X5Vz+STXX/iAu77OO+8hiIEJNf5J0dDt28jsoBsXBVxnSNI5mUkHE+eTuzLsPlE14vGpLHZYmWDqsb6yE4UJ/7HcZ43C0zVjENEgTK6/znG+jTK8lA2OFyPITzI7G8qj0OYVFP1GSvfay3ys4eW1l9GRNMffU9Ywi9smOWpeoI6eJ0qKlpmoHyc7qsLyljg3kMvvAdk1A2VlilYkXj+jGiEbiVc6tZHX7O/D4lo7+RV1l4Q58B5jRuxVuv7rxK4mvL+wCNRPa90oRWKn2eVnFGRwPuTlFs5bxwIiD8tq+WJ4g3q+lD5Wd53CHeiC4nCEeM7n1+Xc/G4JNdsNwZ110gX5dVoe37oYJs1WvE43FQeTma/IrGeOIyllgt8F4y5k2SknTdLWlWQJGaucDa6BzI/aJjodOwVY8FHBP3L/yqxos=
+    secure: AhbOnfqYD2HYVlIZTV1g5RtPnrxcoWT6VPCm/Gl57jq58MrLgjG58/ZNnPtPypCHzqlC+vKmAnrto7ElxuQydN5jiHK1Y7Ky/dxS5rSoixhPGyW1tsYn6hpMOctx/zi8pVy28blEyCsWml8O1+rrM4wFfKiFsOEkE+d2A33nZ/IzOWDGzXWVP5fap2IuMKo9e7+lmU2swMVZKodV4//1qIq/5XwGukR+Xq4H8Fk72g3OxtWCeyhAkwfTOWfINawMEUBhcXI/WtzSJJVGutZE86Y+7lRFfqZPv80Y9Kc5jQXfxcGjMBFo71oemg+U5t/CvmBji4Vp6AHQEy35nz2dt4A+CiWvHoYW7CS3Ba/RsZeswHC5fy+IM/V6l9ULYjgxc1f0c2J943qQdrIn+7YAMDwN+mBO7xTt5/1pFL8IkotYqNtG7CQksy2XhMPi5sRE3JWcV0V3FZONpX77nXRRzKUkGmzAut/G/BAZL0bk0rso5PdFEB+aw+AZhPbvoFEqoU4OzLAo1ofErgUu9bP1XzaANQe/uNugrv+ZxLIsQuX73vC29AIR8G2tYDy3rxGOWQ/WT2tkRgguX8QNRRQBwoVAsrO+FXz9uSAf64cTF+TiQBwwZRsi88eGjcyR5s/mr3kv6XASUxbH5qthfPzEZBlC0r76DRSyCMhIpz/O0GI=
   on:
     branch: master
     tags: true
+    repo: BellGasp/ember-practical-oidc
