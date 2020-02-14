@@ -215,14 +215,6 @@ export default Service.extend({
 
     this.set('userManager', userManager);
 
-    userManager.events.addUserLoaded(() => {
-      userManager.getUser().then(data => {
-        if (data) {
-          this.set('isAuthenticated', true);
-        }
-      });
-    });
-
     $.ajaxSetup({
       beforeSend: async (xhr, settings) => {
         let data = await this.get('userManager').getUser();
