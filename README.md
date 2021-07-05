@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/ember-practical-oidc.svg)](https://badge.fury.io/js/ember-practical-oidc)
 [![Ember Observer Score](https://emberobserver.com/badges/ember-practical-oidc.svg)](https://emberobserver.com/addons/ember-practical-oidc)
-[![Build Status](https://travis-ci.org/BellGasp/ember-practical-oidc.svg?branch=master)](https://travis-ci.org/BellGasp/ember-practical-oidc)
+[![Build Status](https://travis-ci.com/BellGasp/ember-practical-oidc.svg?branch=master)](https://travis-ci.com/BellGasp/ember-practical-oidc)
 [![Code Climate](https://codeclimate.com/github/BellGasp/ember-practical-oidc/badges/gpa.svg)](https://codeclimate.com/github/BellGasp/ember-practical-oidc)
 
 ## Installation
