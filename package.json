@@ -32,7 +32,7 @@
     "ember-auto-import": "^1.5.3",
     "ember-cli-babel": "^6.18.0",
     "ember-get-config": "^0.2.2",
-    "oidc-client": "~1.4.0"
+    "oidc-client": "^1.4.1"
   },
   "devDependencies": {
     "@ember/jquery": "^0.5.2",
