@@ -1,6 +1,6 @@
 {
   "name": "ember-practical-oidc",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An addon that encapsulates a way to interact with an OIDC server using Ember.js.",
   "keywords": [
     "ember-addon",
